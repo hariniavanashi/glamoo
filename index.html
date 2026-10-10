@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Glamoo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: one phone-width column; bright gradient hero, illustrated service tiles, bottom tab bar, sticky action bar in the booking flow. */
+:root{
+  --bg:#FFF4FA; --surface:#FFFFFF; --ink:#2A1236; --muted:#7A6A85; --line:#F1DCEA;
+  --g1:#6A2BD9; --g2:#E0338D; --g3:#FF8A3D;
+  --accent:#B01E7C; --accent-soft:#FCE4F2; --accent-ink:#FFFFFF;
+  --ok:#14804F; --ok-soft:#D9F5E7; --warn:#8A5200; --warn-soft:#FFEBC7; --bad:#C0261E;
+  --shadow:0 2px 4px rgba(106,43,217,.06),0 10px 24px rgba(224,51,141,.10);
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#150C1E; --surface:#221530; --ink:#F6EBFA; --muted:#B7A3C4; --line:#3A2650;
+  --accent:#FF8FC8; --accent-soft:#3B1D45; --accent-ink:#2A1124;
+  --ok:#6CCBA3; --ok-soft:#1D3A30; --warn:#F0BE6B; --warn-soft:#3F3015; --bad:#FF8A80;
+  --shadow:0 2px 4px rgba(0,0,0,.4); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#150C1E; --surface:#221530; --ink:#F6EBFA; --muted:#B7A3C4; --line:#3A2650;
+  --accent:#FF8FC8; --accent-soft:#3B1D45; --accent-ink:#2A1124;
+  --ok:#6CCBA3; --ok-soft:#1D3A30; --warn:#F0BE6B; --warn-soft:#3F3015; --bad:#FF8A80;
+  --shadow:0 2px 4px rgba(0,0,0,.4); color-scheme:dark;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;padding-inline:16px;padding-block:0 130px;-webkit-tap-highlight-color:transparent}
+.app{max-width:460px;margin-inline:auto;min-width:0}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.12}
+h1{font-size:28px;font-weight:800} h2{font-size:21px;font-weight:700} h3{font-size:16px;font-weight:700}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.top{display:flex;align-items:center;gap:10px;padding-block:14px 10px;min-width:0}
+.top h2{flex:1;min-width:0}
+.icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:14px;width:40px;height:40px;display:grid;place-items:center;font-size:18px;box-shadow:var(--shadow)}
+.brand{font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.06em;background:linear-gradient(90deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.muted{color:var(--muted)} .small{font-size:13px}
+.label{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.sec h3{font-size:18px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;gap:10px;min-width:0}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
+/* illustrations */
+.art{border-radius:16px;display:grid;place-items:center;overflow:hidden;flex:none;position:relative}
+.art svg{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 5px rgba(0,0,0,.18))}
+.art.thumb{width:80px;height:80px}
+.art.wide{width:100%;height:98px;border-radius:0}
+.art.tile{width:100%;height:96px;border-radius:0}
+.art.mini{width:52px;height:52px;border-radius:14px}
+/* hero */
+.hero{position:relative;overflow:hidden;background:linear-gradient(125deg,var(--g1) 0%,var(--g2) 62%,var(--g3) 118%);color:#fff;border-radius:24px;padding:18px;min-height:196px;box-shadow:0 14px 30px rgba(224,51,141,.28)}
+.hero .txt{position:relative;max-width:66%;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.hero .side{position:absolute;right:-10px;bottom:-14px;width:150px;height:150px}
+.hero .side svg{width:100%;height:100%;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2))}
+.hero .code{border:1.5px dashed rgba(255,255,255,.9);border-radius:10px;padding:5px 12px;font-weight:700;letter-spacing:.12em;background:rgba(255,255,255,.16);color:#fff}
+.hero .kick{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.9}
+.hero h2{font-size:24px;font-weight:800}
+/* banners */
+.hscroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;margin-inline:-2px;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.banner{flex:none;width:78%;max-width:300px;scroll-snap-align:start;border-radius:18px;padding:14px;color:#fff;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;min-height:112px;text-align:left;border:0}
+.banner b{font-family:var(--display);font-size:19px;line-height:1.1}
+.banner .cd{align-self:flex-start;border:1.5px dashed rgba(255,255,255,.9);border-radius:8px;padding:2px 10px;font-weight:700;letter-spacing:.1em;background:rgba(255,255,255,.16)}
+.banner::after{content:"";position:absolute;right:-24px;top:-24px;width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.18)}
+.pcard{flex:none;width:162px;scroll-snap-align:start;border-radius:18px;overflow:hidden;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.pbody{padding:10px;display:flex;flex-direction:column;gap:6px}
+.pbody .t{font-weight:700;line-height:1.2;min-height:2.4em}
+/* category tiles */
+.cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cat-tile{border:1px solid var(--line);padding:0;border-radius:18px;overflow:hidden;background:var(--surface);text-align:left;box-shadow:var(--shadow);min-width:0}
+.cat-tile .nm{padding:9px 12px 11px;display:block}
+.cat-tile b{display:block;font-family:var(--display);font-size:16px}
+/* stylists */
+.avatars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.person{display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;min-width:0}
+.av{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--display);font-weight:800;font-size:22px;box-shadow:0 6px 14px rgba(0,0,0,.18);border:3px solid var(--surface)}
+.av.sm{width:46px;height:46px;font-size:18px;box-shadow:none}
+.person b{font-size:13px;line-height:1.15}
+.person span{font-size:11px;color:var(--muted);line-height:1.2}
+.perks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.perk{border-radius:14px;padding:10px;color:#fff;font-weight:700;font-size:13px;line-height:1.2;min-height:62px;display:flex;align-items:flex-end}
+/* controls */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 15px;font-weight:700;font-size:14px}
+.chip[aria-pressed="true"]{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--g1),var(--g2))}
+.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:700;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;width:100%;box-shadow:0 8px 18px rgba(224,51,141,.25)}
+.btn.alt{background:var(--accent-soft);color:var(--accent);box-shadow:none}
+.btn.line{background:transparent;border:1.5px solid var(--line);color:var(--ink);box-shadow:none}
+.btn.sm{width:auto;padding:8px 16px;font-size:14px;border-radius:12px}
+.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.btn.link{display:block;text-align:center;text-decoration:none}
+.btn.wa{background:linear-gradient(135deg,#128C4B,#25D366);color:#fff}
+input[type=text],input[type=tel],input[type=search],select{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:12px}
+label.f{display:flex;flex-direction:column;gap:6px;font-weight:500}
+.svc{display:flex;gap:12px;align-items:center}
+.svc .t{font-weight:700;line-height:1.2}
+.price{font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent)}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;border-radius:999px;padding:2px 9px;background:var(--accent-soft);color:var(--accent)}
+.tag.cat{color:#fff}
+.tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.bad{background:var(--warn-soft);color:var(--bad)}
+.days{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.day,.slot{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:9px 4px;text-align:center;font-weight:700}
+.day small{display:block;color:var(--muted);font-weight:500}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.day[aria-pressed="true"],.slot[aria-pressed="true"]{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;border-color:transparent}
+.day[aria-pressed="true"] small{color:inherit}
+.slot[disabled]{opacity:.4;text-decoration:line-through;cursor:not-allowed;background:var(--bg)}
+.opt{display:flex;gap:12px;align-items:center;border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:12px;text-align:left;width:100%}
+.opt[aria-pressed="true"]{border-color:var(--g2);background:var(--accent-soft)}
+.dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex:none}
+.opt[aria-pressed="true"] .dot{border:6px solid var(--g2)}
+.pb{width:46px;height:46px;border-radius:14px;flex:none;display:grid;place-items:center;color:#fff;font-weight:800;font-size:11px;letter-spacing:.04em}
+.bill{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.bill.total{font-weight:800;font-size:18px;border-top:1px dashed var(--line);padding-top:10px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));z-index:5;box-shadow:0 -8px 24px rgba(106,43,217,.08)}
+.bar .in{max-width:460px;margin-inline:auto;display:flex;gap:12px;align-items:center}
+.bar.up{bottom:calc(66px + env(safe-area-inset-bottom,0px));padding-bottom:10px;border-radius:18px 18px 0 0}
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:6}
+.nav .in{max-width:460px;margin-inline:auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.nav button{border:0;background:none;padding:8px 0 7px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:500;color:var(--muted)}
+.nav button[aria-current="page"]{color:var(--accent);font-weight:700}
+.nav .pill{padding:3px 18px;border-radius:999px;display:grid;place-items:center}
+.nav [aria-current="page"] .pill{background:var(--accent-soft)}
+.nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.steps{display:flex;gap:4px}
+.steps i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.steps i.on{background:linear-gradient(90deg,var(--g1),var(--g2))}
+.stepnames{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.stars{display:flex;gap:4px}
+.stars button{border:0;background:none;font-size:28px;padding:0;color:var(--line);line-height:1}
+.stars button.on{color:#F5A400}
+.hbar{height:11px;border-radius:6px;min-width:4px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{border-radius:16px;padding:11px;color:#fff}
+.tile b{display:block;font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+.tile span{opacity:.9}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;font-weight:500;z-index:20;max-width:90vw}
+.err{color:var(--bad);font-size:13px}
+details{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px}
+summary{font-weight:700;cursor:pointer}
+.done-top{position:relative;text-align:center;padding-top:34px}
+.done-top svg.conf{position:absolute;left:0;right:0;top:0;width:100%;height:90px}
+.tick{width:76px;height:76px;border-radius:50%;margin:0 auto;display:grid;place-items:center;background:linear-gradient(135deg,#14B87A,#6EE7B7);box-shadow:0 10px 24px rgba(20,184,122,.35);position:relative}
+.tick svg{width:38px;height:38px;stroke:#fff;fill:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.profile-av{width:64px;height:64px;font-size:26px}
+@media (prefers-reduced-motion:no-preference){.card,.hero,.pcard,.cat-tile{animation:rise .3s ease-out}@keyframes rise{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:none}}.tick{animation:pop .45s cubic-bezier(.2,1.4,.4,1)}@keyframes pop{from{transform:scale(.4)}to{transform:scale(1)}}}
+</style>
+<style>html{color-scheme:light}body{margin:0}</style>
+</head>
+<body>
+
+<div class="app" id="app"></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+const SERVICES=[
+ {id:'s1',cat:'Hair',g:'scissors',name:'Haircut & Styling',min:45,price:350,desc:'Wash, cut and blow-dry'},
+ {id:'s2',cat:'Hair',g:'drop',name:'Hair Spa',min:60,price:900,desc:'Deep conditioning with scalp massage'},
+ {id:'s3',cat:'Hair',g:'palette',name:'Global Hair Colour',min:120,price:2200,desc:'Ammonia-free colour, up to shoulder length'},
+ {id:'s4',cat:'Hair',g:'wave',name:'Keratin Smoothing',min:150,price:3500,desc:'Frizz control that lasts 3 to 4 months'},
+ {id:'s5',cat:'Skin',g:'face',name:'Classic Facial',min:50,price:700,desc:'Cleanse, scrub, massage and mask'},
+ {id:'s6',cat:'Skin',g:'sun',name:'De-tan Cleanup',min:40,price:550,desc:'Removes tan and refreshes dull skin'},
+ {id:'s7',cat:'Skin',g:'gem',name:'Gold Radiance Facial',min:70,price:1400,desc:'Brightening facial for events'},
+ {id:'s8',cat:'Spa',g:'stones',name:'Head & Shoulder Massage',min:30,price:400,desc:'Relieves screen and travel stress'},
+ {id:'s9',cat:'Spa',g:'lotus',name:'Full Body Massage',min:60,price:1800,desc:'Aroma oil massage, private room'},
+ {id:'s10',cat:'Spa',g:'leaf',name:'Foot Reflexology',min:40,price:600,desc:'Pressure-point foot massage'},
+ {id:'s11',cat:'Nails',g:'polish',name:'Manicure',min:40,price:450,desc:'Shape, cuticle care and polish'},
+ {id:'s12',cat:'Nails',g:'foot',name:'Pedicure',min:50,price:550,desc:'Soak, scrub, massage and polish'},
+ {id:'s13',cat:'Nails',g:'gem',name:'Gel Nail Extensions',min:90,price:1500,desc:'Full set with simple colour'},
+ {id:'s14',cat:'Grooming',g:'brow',name:'Eyebrow Threading',min:10,price:50,desc:'Quick shaping'},
+ {id:'s15',cat:'Grooming',g:'drop',name:'Full Arms Waxing',min:25,price:400,desc:'Rica wax, sensitive-skin friendly'},
+ {id:'s16',cat:'Grooming',g:'comb',name:'Beard Trim & Shape',min:20,price:150,desc:'Trim, line-up and hot towel'}
+];
+const CATS=['All','Hair','Skin','Spa','Nails','Grooming'];
+const CAT={Hair:['#7B2FF7','#F107A3','scissors'],Skin:['#D9480F','#FFB347','face'],Spa:['#0B7A75','#3DD6A0','lotus'],Nails:['#D6246E','#C471F5','polish'],Grooming:['#1D4ED8','#38BDF8','comb']};
+const STYLISTS=[{id:'any',n:'Anyone available',d:'Fastest slot',c:['#FF9A3D','#FF4E50'],i:'★'},{id:'priya',n:'Priya',d:'Hair and colour',c:['#7B2FF7','#F107A3'],i:'P'},{id:'meena',n:'Meena',d:'Skin, facials and spa',c:['#0B7A75','#3DD6A0'],i:'M'},{id:'karthik',n:'Karthik',d:"Men's grooming and haircuts",c:['#1D4ED8','#38BDF8'],i:'K'}];
+const SLOTS=['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
+const STAGES=['Booked','Confirmed','In service','Completed'];
+const COUPONS={GLOW20:'20% off, up to ₹300',WELCOME50:'₹50 off orders of ₹300 or more'};
+const SALON={name:'Glamoo',phone:'+91 98765 43210',wa:'919876543210'};
+// Sample sales so the owner view shows a realistic summary. Replace with real orders once the salon uses the app.
+const SAMPLE=[['s1',1],['s1',1],['s2',2],['s5',2],['s11',3],['s12',3],['s1',4],['s8',4],['s7',5],['s3',5],['s1',6],['s5',6],['s14',6],['s9',7],['s2',7],['s16',7],['s1',8],['s12',8]];
+
+/* ---------- illustrations (inline SVG, no external images) ---------- */
+function glyph(k,c){
+  const w='#fff';
+  switch(k){
+  case 'scissors':return `<g fill="none" stroke="${w}" stroke-width="6" stroke-linecap="round"><circle cx="30" cy="74" r="10"/><circle cx="70" cy="74" r="10"/><path d="M37 66L68 24M63 66L32 24"/></g>`;
+  case 'drop':return `<path d="M50 14C50 14 24 46 24 62a26 26 0 0 0 52 0C76 46 50 14 50 14z" fill="${w}"/><path d="M38 64a12 12 0 0 0 12 12" fill="none" stroke="${c[0]}" stroke-opacity=".35" stroke-width="5" stroke-linecap="round"/>`;
+  case 'palette':return `<path d="M50 18C28 18 14 34 14 52c0 20 18 32 34 30 8-1 6-9 12-11 8-3 26 4 26-16C86 34 72 18 50 18z" fill="${w}"/><circle cx="34" cy="46" r="6" fill="${c[0]}"/><circle cx="52" cy="36" r="6" fill="${c[1]}"/><circle cx="68" cy="48" r="6" fill="#FFB347"/><circle cx="38" cy="64" r="5" fill="#14B87A"/>`;
+  case 'wave':return `<g fill="none" stroke="${w}" stroke-width="6" stroke-linecap="round"><path d="M22 20c14 10-14 20 0 30s-14 20 0 30"/><path d="M50 20c14 10-14 20 0 30s-14 20 0 30"/><path d="M78 20c14 10-14 20 0 30s-14 20 0 30"/></g>`;
+  case 'face':return `<ellipse cx="50" cy="52" rx="26" ry="32" fill="${w}"/><circle cx="36" cy="58" r="5" fill="#FF6F91" opacity=".45"/><circle cx="64" cy="58" r="5" fill="#FF6F91" opacity=".45"/><path d="M37 47q5 5 10 0M53 47q5 5 10 0M42 66q8 7 16 0" stroke="${c[0]}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+  case 'sun':return `<circle cx="50" cy="50" r="17" fill="${w}"/><g stroke="${w}" stroke-width="6" stroke-linecap="round"><path d="M50 12v12M50 76v12M12 50h12M76 50h12M23 23l8 8M69 69l8 8M77 23l-8 8M31 69l-8 8"/></g>`;
+  case 'gem':return `<path d="M30 30h40l16 20-36 36L14 50z" fill="${w}"/><path d="M14 50h72M38 30l12 56 12-56" stroke="${c[0]}" stroke-opacity=".4" stroke-width="3" fill="none"/>`;
+  case 'stones':return `<ellipse cx="50" cy="74" rx="30" ry="11" fill="${w}"/><ellipse cx="50" cy="52" rx="22" ry="9" fill="${w}" opacity=".92"/><ellipse cx="50" cy="34" rx="14" ry="7" fill="${w}" opacity=".85"/>`;
+  case 'lotus':return `<g fill="${w}"><ellipse cx="50" cy="50" rx="12" ry="28"/><ellipse cx="50" cy="50" rx="12" ry="28" transform="rotate(-48 50 78)" opacity=".9"/><ellipse cx="50" cy="50" rx="12" ry="28" transform="rotate(48 50 78)" opacity=".9"/></g><ellipse cx="50" cy="84" rx="30" ry="5" fill="${w}" opacity=".6"/>`;
+  case 'leaf':return `<path d="M24 76C20 36 50 18 80 22 82 52 62 80 24 76z" fill="${w}"/><path d="M26 74C42 54 54 42 70 32" stroke="${c[0]}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+  case 'polish':return `<rect x="32" y="46" width="36" height="36" rx="10" fill="${w}"/><rect x="43" y="34" width="14" height="14" fill="${w}" opacity=".9"/><rect x="40" y="12" width="20" height="24" rx="6" fill="${w}" opacity=".8"/><rect x="40" y="58" width="20" height="10" rx="5" fill="${c[0]}" opacity=".35"/>`;
+  case 'foot':return `<ellipse cx="50" cy="68" rx="17" ry="22" fill="${w}"/><g fill="${w}"><circle cx="33" cy="34" r="5.5"/><circle cx="43" cy="28" r="5.5"/><circle cx="54" cy="27" r="5.5"/><circle cx="64" cy="31" r="5"/></g>`;
+  case 'brow':return `<path d="M16 58Q50 18 84 50" fill="none" stroke="${w}" stroke-width="10" stroke-linecap="round"/><path d="M20 80L82 80" stroke="${w}" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round"/>`;
+  case 'comb':{let t='';for(let i=0;i<8;i++)t+=`<rect x="${18+i*8.6}" y="46" width="5" height="26" rx="2.5" fill="${w}"/>`;return `<rect x="16" y="30" width="68" height="16" rx="6" fill="${w}"/>${t}`}
+  }
+  return '';
+}
+function art(cat,g,idx,cls){
+  const c=CAT[cat],ang=115+(idx%5)*28;
+  const deco=`<circle cx="${82-(idx%4)*7}" cy="${16+(idx%3)*6}" r="28" fill="#fff" opacity=".14"/><circle cx="${10+(idx%3)*6}" cy="94" r="32" fill="#fff" opacity=".11"/><path d="M84 62l2.5 6.5 6.5 2.5-6.5 2.5-2.5 6.5-2.5-6.5-6.5-2.5 6.5-2.5z" fill="#fff" opacity=".9"/><path d="M16 22l1.8 4.6 4.6 1.8-4.6 1.8-1.8 4.6-1.8-4.6-4.6-1.8 4.6-1.8z" fill="#fff" opacity=".7"/>`;
+  return `<div class="art ${cls}" style="background:linear-gradient(${ang}deg,${c[0]},${c[1]})"><svg viewBox="0 0 100 100" aria-hidden="true">${deco}${glyph(g,c)}</svg></div>`;
+}
+const sArt=(s,cls)=>art(s.cat,s.g,parseInt(s.id.slice(1)),cls);
+const av=(st,cls='')=>`<div class="av ${cls}" style="background:linear-gradient(135deg,${st.c[0]},${st.c[1]})" aria-hidden="true">${st.i}</div>`;
+
+let S={view:'home',cat:'All',q:'',cart:[],stylist:'any',date:null,slot:null,coupon:'',couponMsg:'',usePts:false,pay:'upi',upi:'',consent:false,
+  user:null,bookings:[],ratings:{},phone:'',name:'',otpSent:false,otp:'',after:'profile',lastId:null,err:''};
+try{const d=JSON.parse(localStorage.getItem('mayil')||'null');if(d){S.user=d.user||null;S.bookings=d.bookings||[]}}catch(e){}
+function save(){try{localStorage.setItem('mayil',JSON.stringify({user:S.user,bookings:S.bookings}))}catch(e){}}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const inr=n=>'₹'+Number(n).toLocaleString('en-IN');
+const svc=id=>SERVICES.find(s=>s.id===id);
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function days(){const a=[];for(let i=0;i<8;i++){const d=new Date();d.setDate(d.getDate()+i);const iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');a.push({iso,dow:i===0?'Today':DOW[d.getDay()],dm:d.getDate()+' '+MON[d.getMonth()]})}return a}
+function hash(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h}
+function slotTaken(iso,t){
+  if(S.bookings.some(b=>b.date===iso&&b.slot===t&&b.status!=='Cancelled'))return true;
+  const now=new Date(),today=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  if(iso===today&&parseInt(t)<=now.getHours())return true;
+  return hash(iso+t)%4===0;
+}
+const t12=t=>{const h=parseInt(t);return (h>12?h-12:h)+':00 '+(h>=12?'PM':'AM')};
+const dLabel=iso=>{const d=days().find(x=>x.iso===iso);return d?d.dow+', '+d.dm:iso};
+function totals(){
+  const sub=S.cart.reduce((a,id)=>a+svc(id).price,0),min=S.cart.reduce((a,id)=>a+svc(id).min,0);
+  let disc=0;
+  if(S.coupon==='GLOW20')disc=Math.min(Math.round(sub*.2),300);
+  if(S.coupon==='WELCOME50'&&sub>=300)disc=50;
+  const pts=S.usePts&&S.user?Math.min(S.user.points,Math.floor((sub-disc)*.3)):0;
+  return{sub,min,disc,pts,total:sub-disc-pts};
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2200)}
+function go(v){S.view=v;S.err='';render();window.scrollTo(0,0)}
+
+const ICON={
+ home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>',
+ svc:'<svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></svg>',
+ cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
+ me:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>'
+};
+function nav(){
+  const items=[['home','Home','home'],['services','Services','svc'],['bookings','Bookings','cal'],['profile','Profile','me']];
+  return `<nav class="nav" aria-label="Main"><div class="in">${items.map(([v,l,i])=>`<button data-act="go" data-v="${v}" ${S.view===v?'aria-current="page"':''}><span class="pill">${ICON[i]}</span>${l}</button>`).join('')}</div></nav>`;
+}
+const head=(t,back)=>`<div class="top">${back?`<button class="icon-btn" data-act="go" data-v="${back}" aria-label="Back">←</button>`:''}<h2>${t}</h2></div>`;
+
+function svcCard(s){
+  const on=S.cart.includes(s.id),c=CAT[s.cat];
+  return `<div class="card svc">${sArt(s,'thumb')}<div class="grow"><span class="tag cat" style="background:${c[0]}">${s.cat}</span><div class="t" style="margin-top:3px">${esc(s.name)}</div><div class="muted small">${esc(s.desc)} · ${s.min} min</div><div class="price" style="margin-top:2px">${inr(s.price)}</div></div>
+  <button class="btn sm ${on?'alt':''}" data-act="toggle" data-id="${s.id}" aria-pressed="${on}">${on?'Added ✓':'Add'}</button></div>`;
+}
+function pCard(s){
+  const on=S.cart.includes(s.id);
+  return `<div class="pcard">${sArt(s,'wide')}<div class="pbody"><div class="t">${esc(s.name)}</div><div class="row between"><span class="price">${inr(s.price)}</span><button class="btn sm ${on?'alt':''}" data-act="toggle" data-id="${s.id}" aria-pressed="${on}" style="padding:6px 14px">${on?'✓':'Add'}</button></div></div></div>`;
+}
+function svcList(){
+  const q=S.q.trim().toLowerCase();
+  const l=SERVICES.filter(s=>(S.cat==='All'||s.cat===S.cat)&&(!q||(s.name+' '+s.desc+' '+s.cat).toLowerCase().includes(q)));
+  return l.length?l.map(svcCard).join(''):'<div class="card muted">No service matches that search. Try a different word or category.</div>';
+}
+function cartBar(){
+  if(!S.cart.length)return '';
+  const t=totals();
+  return `<div class="bar up"><div class="in"><div class="grow"><b>${S.cart.length} service${S.cart.length>1?'s':''}</b><div class="muted small">${t.min} min · ${inr(t.sub)}</div></div><button class="btn sm" style="padding-inline:22px" data-act="go" data-v="book">Book slot</button></div></div>`;
+}
+
+function vHome(){
+  const pop=['s1','s5','s2','s12','s9','s16'].map(svc);
+  const heroSide=`<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="58" cy="52" r="40" fill="#fff" opacity=".16"/>${glyph('scissors',['#fff','#fff']).replace(/<g /,'<g transform="translate(6 0)" ')}<path d="M84 18l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#fff"/><path d="M20 30l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#fff" opacity=".8"/></svg>`;
+  return `<div class="top"><div class="grow"><div class="brand">GLAMOO</div></div>${S.user?`<span class="tag ok">${S.user.points} points</span>`:`<button class="btn alt sm" data-act="loginGo">Log in</button>`}</div>
+  <div class="stack">
+   <div class="hero"><div class="side">${heroSide}</div><div class="txt"><div class="kick">${S.user?'Welcome back, '+esc(S.user.name.split(' ')[0]):'First-visit offer'}</div><h2>Look good.<br>Book in a minute.</h2><div class="code">GLOW20</div><div class="small" style="opacity:.95">20% off, up to ₹300</div></div></div>
+   <div class="row"><button class="btn" data-act="go" data-v="services">Book a service</button>
+    <a class="btn wa link" href="https://wa.me/${SALON.wa}" target="_blank" rel="noopener">WhatsApp us</a></div>
+   <div class="sec"><h3>Browse by category</h3></div>
+   <div class="cat-grid">${Object.keys(CAT).map(k=>{const n=SERVICES.filter(s=>s.cat===k).length,first=SERVICES.find(s=>s.cat===k);return `<button class="cat-tile" data-act="cat" data-c="${k}">${art(k,CAT[k][2],k.length,'tile')}<span class="nm"><b>${k}</b><span class="muted small">${n} services</span></span></button>`}).join('')}
+    <button class="cat-tile" data-act="cat" data-c="All" style="display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;border:0"><b style="font-size:20px">All services</b><span class="small">${SERVICES.length} to choose from</span></button></div>
+   <div class="sec"><h3>Most booked</h3><button class="btn alt sm" data-act="go" data-v="services">See all</button></div>
+   <div class="hscroll">${pop.map(pCard).join('')}</div>
+   <div class="sec"><h3>Offers</h3></div>
+   <div class="hscroll">
+    <button class="banner" data-act="copyCode" data-code="GLOW20" style="background:linear-gradient(135deg,#7B2FF7,#F107A3)"><span class="small">First visit</span><b>20% off, up to ₹300</b><span class="cd">GLOW20</span></button>
+    <button class="banner" data-act="copyCode" data-code="WELCOME50" style="background:linear-gradient(135deg,#0B7A75,#3DD6A0)"><span class="small">Orders of ₹300 or more</span><b>₹50 off your bill</b><span class="cd">WELCOME50</span></button>
+    <button class="banner" data-act="share" style="background:linear-gradient(135deg,#D9480F,#FFB347)"><span class="small">Refer a friend</span><b>Both get 100 points</b><span class="cd">${S.user?refCode():'Log in for code'}</span></button>
+   </div>
+   <div class="sec"><h3>Meet the team</h3></div>
+   <div class="card"><div class="avatars">${STYLISTS.slice(1).map(s=>`<div class="person">${av(s)}<b>${s.n}</b><span>${s.d}</span></div>`).join('')}<div class="person"><div class="av" style="background:linear-gradient(135deg,#FF9A3D,#FF4E50)" aria-hidden="true">+</div><b>Front desk</b><span>Walk-ins and help</span></div></div></div>
+   <div class="perks"><div class="perk" style="background:linear-gradient(135deg,#7B2FF7,#F107A3)">Live open slots</div><div class="perk" style="background:linear-gradient(135deg,#0B7A75,#3DD6A0)">Pay online or at salon</div><div class="perk" style="background:linear-gradient(135deg,#D9480F,#FFB347)">Earn loyalty points</div></div>
+   <div class="muted small" style="text-align:center">Call or WhatsApp: ${SALON.phone}</div>
+  </div>${cartBar()}${nav()}`;
+}
+function vServices(){
+  return `${head('Services')}<div class="stack">
+  <input type="search" id="q" placeholder="Search haircut, facial, nails" value="${esc(S.q)}" aria-label="Search services" data-bind="q">
+  <div class="chips">${CATS.map(c=>`<button class="chip" data-act="cat" data-c="${c}" aria-pressed="${S.cat===c}" ${S.cat===c&&c!=='All'?`style="background:linear-gradient(135deg,${CAT[c][0]},${CAT[c][1]})"`:''}>${c}</button>`).join('')}</div>
+  <div class="stack" id="list">${svcList()}</div></div>${cartBar()}${nav()}`;
+}
+function vBook(){
+  if(!S.cart.length)return `${head('Book a slot','services')}<div class="card muted">Pick at least one service first.</div>`;
+  const t=totals(),ok=S.date&&S.slot;
+  return `${head('Choose time','services')}<div class="stack">
+  <div class="card stack">${S.cart.map(id=>{const s=svc(id);return `<div class="row">${sArt(s,'mini')}<span class="grow"><b>${esc(s.name)}</b><br><span class="muted small">${s.min} min</span></span><span class="price">${inr(s.price)}</span></div>`}).join('')}
+   <div class="row between muted small"><span>${t.min} minutes in total</span><button class="btn alt sm" data-act="go" data-v="services">Edit</button></div></div>
+  <div class="label">Stylist</div>
+  ${STYLISTS.map(s=>`<button class="opt" data-act="stylist" data-id="${s.id}" aria-pressed="${S.stylist===s.id}">${av(s,'sm')}<span class="grow"><b>${s.n}</b><br><span class="muted small">${s.d}</span></span><span class="dot"></span></button>`).join('')}
+  <div class="label">Date</div>
+  <div class="days">${days().map(d=>`<button class="day" data-act="date" data-d="${d.iso}" aria-pressed="${S.date===d.iso}"><small>${d.dow}</small>${d.dm}</button>`).join('')}</div>
+  <div class="label">Time</div>
+  ${S.date?`<div class="slots">${SLOTS.map(s=>{const tk=slotTaken(S.date,s);return `<button class="slot" data-act="slot" data-t="${s}" ${tk?'disabled':''} aria-pressed="${S.slot===s}">${t12(s)}</button>`}).join('')}</div><div class="muted small">Struck-out times are already booked.</div>`:'<div class="muted small">Pick a date to see open times.</div>'}
+  </div>
+  <div class="bar"><div class="in"><div class="grow"><b>${inr(t.sub)}</b><div class="muted small">${ok?dLabel(S.date)+', '+t12(S.slot):'Select date and time'}</div></div><button class="btn sm" style="padding-inline:22px" data-act="toCheckout" ${ok?'':'disabled'}>Continue</button></div></div>`;
+}
+function vLogin(){
+  return `${head('Log in',S.after==='checkout'?'book':'profile')}<div class="stack">
+  <div class="hero" style="min-height:0"><div class="txt" style="max-width:100%"><div class="kick">Welcome</div><h2>Log in to book</h2><div class="small">New here? You get 50 welcome points.</div></div></div>
+  <div class="card stack"><p style="margin:0" class="muted">We use your phone number only to confirm bookings and send reminders. You can delete your data from the Profile page.</p>
+   <label class="f">Your name<input type="text" id="name" data-bind="name" value="${esc(S.name)}" autocomplete="name"></label>
+   <label class="f">Mobile number<input type="tel" id="phone" data-bind="phone" value="${esc(S.phone)}" inputmode="numeric" maxlength="10" placeholder="10-digit number" autocomplete="tel-national"></label>
+   ${S.otpSent?`<label class="f">OTP (demo code is 1234)<input type="text" id="otp" data-bind="otp" value="${esc(S.otp)}" inputmode="numeric" maxlength="4"></label>`:''}
+   ${S.err?`<div class="err" role="alert">${esc(S.err)}</div>`:''}
+   <div class="row"><input type="checkbox" id="cons" data-act="consent" ${S.consent?'checked':''} style="width:20px;height:20px"><label for="cons" class="small">I agree to the privacy notice (DPDP Act 2023) and to receive booking messages.</label></div>
+   <button class="btn" data-act="${S.otpSent?'verify':'sendOtp'}">${S.otpSent?'Verify and continue':'Send OTP'}</button></div></div>`;
+}
+function vCheckout(){
+  const t=totals(),pts=S.user?S.user.points:0,st=STYLISTS.find(s=>s.id===S.stylist);
+  const PAY=[['upi','UPI','Pay with any UPI app','#14B87A'],['card','Debit / credit card','Handled by the payment gateway; we never see or store card numbers','#2563EB'],['salon','Pay at salon','Pay after your service; the slot is held for 15 minutes past your time','#F59E0B']];
+  return `${head('Checkout','book')}<div class="stack">
+  <div class="card stack"><div class="label">Your appointment</div>
+   <div class="row">${av(st,'sm')}<div><b>${dLabel(S.date)}, ${t12(S.slot)}</b><div class="muted small">${st.n} · ${t.min} min</div></div></div>
+   ${S.cart.map(id=>`<div class="row between"><span>${esc(svc(id).name)}</span><span class="price">${inr(svc(id).price)}</span></div>`).join('')}</div>
+  <div class="card stack"><div class="label">Coupon</div>
+   <div class="row"><input type="text" id="coupon" data-bind="coupon" value="${esc(S.coupon)}" placeholder="Try GLOW20" aria-label="Coupon code" style="text-transform:uppercase"><button class="btn alt sm" data-act="applyCoupon">Apply</button></div>
+   ${S.couponMsg?`<div class="small ${t.disc?'':'err'}" ${t.disc?'style="color:var(--ok)"':''}>${esc(S.couponMsg)}</div>`:''}
+   <button class="opt" data-act="pts" aria-pressed="${S.usePts}" ${pts?'':'disabled'}><span class="dot"></span><span><b>Use loyalty points</b><br><span class="muted small">You have ${pts} points (1 point = ₹1, up to 30% of the bill)</span></span></button></div>
+  <div class="card stack"><div class="label">Payment (simulated)</div>
+   ${PAY.map(([k,n,d,col])=>`<button class="opt" data-act="pay" data-k="${k}" aria-pressed="${S.pay===k}"><span class="pb" style="background:${col}">${k==='upi'?'UPI':k==='card'?'CARD':'SALON'}</span><span class="grow"><b>${n}</b><br><span class="muted small">${d}</span></span><span class="dot"></span></button>`).join('')}
+   ${S.pay==='upi'?`<label class="f">UPI ID<input type="text" id="upi" data-bind="upi" value="${esc(S.upi)}" placeholder="name@bank" autocapitalize="none"></label>`:''}
+   ${S.err?`<div class="err" role="alert">${esc(S.err)}</div>`:''}</div>
+  <div class="card stack"><div class="bill"><span>Services</span><span>${inr(t.sub)}</span></div>
+   ${t.disc?`<div class="bill" style="color:var(--ok)"><span>Coupon ${S.coupon}</span><span>−${inr(t.disc)}</span></div>`:''}
+   ${t.pts?`<div class="bill" style="color:var(--ok)"><span>Loyalty points</span><span>−${inr(t.pts)}</span></div>`:''}
+   <div class="bill total"><span>${S.pay==='salon'?'To pay at salon':'To pay now'}</span><span>${inr(t.total)}</span></div>
+   <div class="muted small">Prices include 18% GST. Free cancellation up to 4 hours before your slot; online payments are refunded in 5 to 7 working days (Consumer Protection (E-Commerce) Rules 2020).</div></div>
+  </div>
+  <div class="bar"><div class="in"><button class="btn" id="payBtn" data-act="confirm">${S.pay==='salon'?'Confirm booking':'Pay '+inr(t.total)+' and confirm'}</button></div></div>`;
+}
+function vDone(){
+  const b=S.bookings.find(x=>x.id===S.lastId);if(!b)return vHome();
+  const conf=['#F107A3','#7B2FF7','#FFB347','#3DD6A0','#38BDF8','#FF4E50'].map((c,i)=>`<rect x="${6+i*16}%" y="${10+(i%3)*18}" width="9" height="9" rx="2" fill="${c}" transform="rotate(${i*37} ${40+i*30} 30)"/><circle cx="${14+i*16}%" cy="${58-(i%2)*22}" r="4.5" fill="${['#3DD6A0','#FFB347','#F107A3','#38BDF8','#FF4E50','#7B2FF7'][i]}"/>`).join('');
+  return `<div class="stack"><div class="done-top"><svg class="conf" aria-hidden="true">${conf}</svg><div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h1 style="margin-top:14px">You're booked!</h1></div>
+  <div class="card stack" style="text-align:center"><div class="label">Booking ID</div><h2 style="letter-spacing:.06em">${esc(b.id)}</h2>
+   <div><b>${dLabel(b.date)}, ${t12(b.slot)}</b></div><div class="muted small">${b.items.map(i=>esc(svc(i).name)).join(', ')}</div>
+   <div class="price">${b.pay==='salon'?'Pay '+inr(b.total)+' at salon':'Paid '+inr(b.total)}</div></div>
+  <div class="card small muted">A confirmation message would be sent to your phone (simulated in this prototype). You earn ${Math.floor(b.total/10)} loyalty points when the service is completed.</div>
+  <button class="btn" data-act="go" data-v="bookings">Track my booking</button>
+  <button class="btn line" data-act="go" data-v="home">Back to home</button></div>`;
+}
+function timeline(st){
+  if(st==='Cancelled')return '<span class="tag bad">Cancelled</span>';
+  const i=STAGES.indexOf(st);
+  return `<div class="steps" aria-label="Status: ${st}">${STAGES.map((s,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')}</div><div class="stepnames">${STAGES.map(s=>`<span>${s}</span>`).join('')}</div>`;
+}
+function vBookings(){
+  const l=S.bookings.slice().reverse();
+  return `${head('My bookings')}<div class="stack">${l.length?l.map(b=>{
+    const r=S.ratings[b.id],first=svc(b.items[0]);
+    return `<div class="card stack"><div class="row">${sArt(first,'mini')}<div class="grow"><b>${esc(b.id)}</b><div class="muted small">${dLabel(b.date)}, ${t12(b.slot)}</div></div><span class="tag ${b.status==='Completed'?'ok':b.status==='Cancelled'?'bad':''}">${b.status}</span></div>
+    <div>${b.items.map(i=>esc(svc(i).name)).join(', ')}</div>
+    <div class="muted small">${inr(b.total)} · ${b.pay==='salon'?'Pay at salon':'Paid online'}</div>
+    ${timeline(b.status)}
+    ${b.status==='Completed'?`<div class="stars" role="group" aria-label="Rate this visit">${[1,2,3,4,5].map(n=>`<button class="${r>=n?'on':''}" data-act="rate" data-id="${b.id}" data-n="${n}" aria-label="${n} stars">★</button>`).join('')}</div>${r?'<div class="small muted">Thanks for rating us '+r+' out of 5.</div>':'<div class="small muted">How was your visit? Tap a star.</div>'}`:''}
+    <div class="row">${b.status==='Booked'||b.status==='Confirmed'?`<button class="btn line sm" data-act="cancel" data-id="${b.id}">Cancel</button>`:''}
+    <button class="btn alt sm" data-act="rebook" data-id="${b.id}">Book again</button></div></div>`}).join(''):'<div class="card muted">No bookings yet. Choose a service and pick a slot to make your first one.</div>'}
+  </div>${nav()}`;
+}
+function refCode(){return S.user?'GLAMOO-'+S.user.name.replace(/[^a-z]/gi,'').slice(0,4).toUpperCase()+S.user.phone.slice(-2):''}
+function vProfile(){
+  if(!S.user)return `${head('Profile')}<div class="stack"><div class="card stack"><b>Log in to see your bookings and points</b><p class="muted small" style="margin:0">Takes 20 seconds. No password needed.</p><button class="btn" data-act="loginGo">Log in</button></div>
+   ${faq()}<button class="btn line" data-act="go" data-v="admin">Owner view (demo)</button></div>${nav()}`;
+  const done=S.bookings.filter(b=>b.status==='Completed').length;
+  return `${head('Profile')}<div class="stack">
+  <div class="hero" style="min-height:0"><div class="row"><div class="av profile-av" style="background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.6)">${esc(S.user.name[0].toUpperCase())}</div><div class="grow"><h2>${esc(S.user.name)}</h2><div class="small" style="opacity:.9">+91 ${esc(S.user.phone)}</div></div></div>
+   <div class="row" style="margin-top:14px"><span class="code" style="font-size:15px">${S.user.points} points</span><span class="small" style="opacity:.95">${S.bookings.length} bookings · ${done} completed</span></div></div>
+  <div class="muted small">Earn 1 point for every ₹10 spent once a service is completed.</div>
+  <div class="card stack"><b>Referral code</b><div class="row between"><span class="price" style="letter-spacing:.08em">${refCode()}</span><button class="btn alt sm" data-act="share">Copy</button></div></div>
+  ${faq()}
+  <button class="btn line" data-act="go" data-v="admin">Owner view (demo)</button>
+  <button class="btn line" data-act="logout">Log out</button>
+  <button class="btn line" data-act="erase">Delete my data</button></div>${nav()}`;
+}
+function faq(){
+  return `<div class="stack"><div class="label">Help</div>
+  <details><summary>Can I change my time?</summary><p class="small muted">Cancel from My bookings up to 4 hours before and book a new slot.</p></details>
+  <details><summary>Is my payment safe?</summary><p class="small muted">Card and UPI payments go through an RBI-compliant gateway. This app never stores card numbers or UPI PINs.</p></details>
+  <details><summary>How do loyalty points work?</summary><p class="small muted">You get 1 point per ₹10 once a service is completed. Use them at checkout, up to 30% of the bill.</p></details>
+  <details><summary>What data do you keep?</summary><p class="small muted">Your name, phone number and bookings, only to run your appointments (DPDP Act 2023). Delete them any time from Profile.</p></details></div>`;
+}
+function vAdmin(){
+  const rows=SAMPLE.map(([id,d])=>({id,amt:svc(id).price}))
+    .concat(S.bookings.filter(b=>b.status!=='Cancelled').flatMap(b=>b.items.map(i=>({id:i,amt:svc(i).price}))));
+  const rev=rows.reduce((a,r)=>a+r.amt,0),cnt={};rows.forEach(r=>cnt[r.id]=(cnt[r.id]||0)+1);
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,5),mx=top[0][1];
+  const live=S.bookings.slice().reverse();
+  return `${head('Owner view','profile')}<div class="stack">
+  <div class="card small muted">Demo screen. The figures mix ${SAMPLE.length} sample services with any bookings made in this app.</div>
+  <div class="tiles"><div class="tile" style="background:linear-gradient(135deg,#7B2FF7,#F107A3)"><span class="small">Revenue</span><b>${inr(rev)}</b></div><div class="tile" style="background:linear-gradient(135deg,#0B7A75,#3DD6A0)"><span class="small">Services</span><b>${rows.length}</b></div><div class="tile" style="background:linear-gradient(135deg,#D9480F,#FFB347)"><span class="small">Avg ticket</span><b>${inr(Math.round(rev/rows.length))}</b></div></div>
+  <div class="card stack"><div class="label">Top services</div>${top.map(([id,n])=>{const s=svc(id),c=CAT[s.cat];return `<div class="row">${sArt(s,'mini')}<div class="grow"><div class="row between small"><span>${esc(s.name)}</span><b>${n}</b></div><div class="hbar" style="width:${Math.round(n/mx*100)}%;background:linear-gradient(90deg,${c[0]},${c[1]})"></div></div></div>`}).join('')}</div>
+  <div class="card stack"><div class="label">Appointments from this app</div>${live.length?live.map(b=>`<div class="row between"><div class="grow"><b>${esc(b.id)}</b> · ${esc(b.name)}<div class="muted small">${dLabel(b.date)}, ${t12(b.slot)} · ${b.status}</div></div>${b.status!=='Completed'&&b.status!=='Cancelled'?`<button class="btn alt sm" data-act="advance" data-id="${b.id}">Next</button>`:''}</div>`).join(''):'<div class="muted small">No bookings from this app yet. Make one as a customer, then update its status here.</div>'}</div></div>`;
+}
+
+function render(){
+  const v={home:vHome,services:vServices,book:vBook,login:vLogin,checkout:vCheckout,done:vDone,bookings:vBookings,profile:vProfile,admin:vAdmin}[S.view]||vHome;
+  $('#app').innerHTML=v();
+}
+function refreshList(){const l=$('#list');if(l)l.innerHTML=svcList()}
+
+const A={
+ go:d=>go(d.v),
+ cat:d=>{S.cat=d.c;S.q='';go('services')},
+ toggle:d=>{const i=S.cart.indexOf(d.id);i>=0?S.cart.splice(i,1):S.cart.push(d.id);const y=scrollY;render();scrollTo(0,y)},
+ stylist:d=>{S.stylist=d.id;const y=scrollY;render();scrollTo(0,y)},
+ date:d=>{S.date=d.d;if(S.slot&&slotTaken(S.date,S.slot))S.slot=null;const y=scrollY;render();scrollTo(0,y)},
+ slot:d=>{S.slot=d.t;const y=scrollY;render();scrollTo(0,y)},
+ toCheckout:()=>{if(!S.user){S.after='checkout';S.otpSent=false;S.otp='';go('login')}else go('checkout')},
+ consent:(d,el)=>{S.consent=el.checked},
+ sendOtp:()=>{
+  if(S.name.trim().length<2)return fail('Enter your name.');
+  if(!/^[6-9]\d{9}$/.test(S.phone))return fail('Enter a valid 10-digit Indian mobile number.');
+  if(!S.consent)return fail('Please accept the privacy notice to continue.');
+  S.otpSent=true;S.err='';render();toast('OTP sent (demo code: 1234)');
+ },
+ verify:()=>{
+  if(S.otp!=='1234')return fail('That OTP is wrong. Use 1234 in this demo.');
+  S.user={name:S.name.trim(),phone:S.phone,points:S.user?S.user.points:50};save();
+  toast('Logged in. 50 welcome points added.');go(S.after);
+ },
+ loginGo:()=>{S.after='profile';S.otpSent=false;S.otp='';go('login')},
+ applyCoupon:()=>{
+  const c=S.coupon.trim().toUpperCase();S.coupon=c;
+  if(COUPONS[c]){S.couponMsg=(c==='WELCOME50'&&totals().sub<300)?'WELCOME50 needs an order of ₹300 or more.':c+' applied: '+COUPONS[c];}
+  else{S.couponMsg=c?'That code is not valid.':'Enter a code first.';S.coupon=''}
+  render();
+ },
+ copyCode:d=>{S.coupon=d.code;
+  (navigator.clipboard?navigator.clipboard.writeText(d.code):Promise.reject()).then(()=>toast(d.code+' copied. Use it at checkout.')).catch(()=>toast('Use code '+d.code+' at checkout'))},
+ pts:()=>{S.usePts=!S.usePts;render()},
+ pay:d=>{S.pay=d.k;S.err='';render()},
+ confirm:()=>{
+  if(S.pay==='upi'&&!/^[\w.\-]{2,}@[a-z]{2,}$/i.test(S.upi.trim()))return fail('Enter a valid UPI ID such as name@bank.');
+  const t=totals(),btn=$('#payBtn');btn.disabled=true;btn.textContent=S.pay==='salon'?'Confirming…':'Processing payment…';
+  setTimeout(()=>{
+    const id='GL'+String(Math.floor(10000+Math.random()*89999));
+    S.bookings.push({id,items:S.cart.slice(),stylist:S.stylist,date:S.date,slot:S.slot,total:t.total,pay:S.pay,status:'Booked',name:S.user.name});
+    if(t.pts)S.user.points-=t.pts;
+    S.lastId=id;S.cart=[];S.slot=null;S.date=null;S.coupon='';S.couponMsg='';S.usePts=false;save();go('done');
+  },1100);
+ },
+ cancel:d=>{const b=S.bookings.find(x=>x.id===d.id);if(b){b.status='Cancelled';save();render();toast('Booking '+b.id+' cancelled')}},
+ rebook:d=>{const b=S.bookings.find(x=>x.id===d.id);if(b){S.cart=b.items.slice();S.stylist=b.stylist;S.date=null;S.slot=null;go('book');toast('Same services added. Pick a new time.')}},
+ rate:d=>{S.ratings[d.id]=+d.n;render()},
+ advance:d=>{const b=S.bookings.find(x=>x.id===d.id);if(!b)return;
+  const i=STAGES.indexOf(b.status);if(i<STAGES.length-1){b.status=STAGES[i+1];
+   if(b.status==='Completed'&&S.user){const p=Math.floor(b.total/10);S.user.points+=p;toast('Completed. Customer earned '+p+' points.')}else toast('Status: '+b.status)}
+  save();render()},
+ share:()=>{
+  if(!S.user)return A.loginGo();
+  const txt='Book at Glamoo with my code '+refCode()+' and get 20% off.';
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Referral message copied')).catch(()=>toast('Your code is '+refCode()));
+ },
+ logout:()=>{S.user=null;save();toast('Logged out');go('home')},
+ erase:()=>{S.user=null;S.bookings=[];S.ratings={};save();toast('Your data was deleted');go('home')}
+};
+function fail(m){S.err=m;const y=scrollY;render();scrollTo(0,y)}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el||el.disabled)return;if(el.type==='checkbox'){A.consent({},el);return}A[el.dataset.act]&&A[el.dataset.act](el.dataset,el)});
+document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.bind;if(!k)return;
+  if(k==='phone'){e.target.value=e.target.value.replace(/\D/g,'');}
+  S[k]=e.target.value;if(k==='q')refreshList()});
+render();
+</script>
+
+</body>
+</html>
